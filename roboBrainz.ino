@@ -75,45 +75,28 @@ void setup() {
   motordriver.setSpeed(spd, LEFT_MOTOR);
   motordriver.setSpeed(spd, RIGHT_MOTOR);
   delay(2000);
-  // go(10000, 0);
-  // delay(2000);
-  // go(0, 10000);
-  // delay(2000);
-  // go(-10000, -10000);
-  // delay(2000);
-  // go(-10000, 10000);
-  // go_mm(200, 200);
-
+  
   go_mm(-1000, -1000);
 
   go_mm(WHEELS_DISTANCE_MM * 3 / 2, 0);
-  go_mm(90*100, 90*100);
-  motordriver.setSpeed(spd/2, LEFT_MOTOR);
+  go_mm(93*100, 93*100);
+  motordriver.setSpeed(spd/2.5, LEFT_MOTOR);
   motordriver.setSpeed(spd, RIGHT_MOTOR);
   go_mm(500, 1000);
   motordriver.setSpeed(spd, LEFT_MOTOR);
   motordriver.setSpeed(spd, RIGHT_MOTOR);
   go_mm(0, 300);
+  go_mm(20*100, 20*100);
+  motordriver.setSpeed(spd, LEFT_MOTOR);
+  motordriver.setSpeed(spd*0.9, RIGHT_MOTOR);
+  go_mm(-2000, -2000*0.8);
+  delay(1000);
+  motordriver.setSpeed(spd, LEFT_MOTOR);
+  motordriver.setSpeed(spd, RIGHT_MOTOR);
   go_mm(200*100, 200*100);
+  
 
 
-
-  // while (1) {
-  //   go_mm((-(WHEELS_DISTANCE_MM * 3.1415 / 2) / 149) * 180,
-  //         ((WHEELS_DISTANCE_MM * 3.1415 / 2) / 149) * 180);
-  //   delay(1000);
-  //   go_mm(((WHEELS_DISTANCE_MM * 3.1415 / 2) / 149) * 180,
-  //         (-(WHEELS_DISTANCE_MM * 3.1415 / 2) / 149) * 180);
-  //   delay(1000);
-  // }
-  //  delay(1000);
-  //  go_mm(290, 0);
-  //  delay(1000);
-  //  go_mm(-110, -110);
-  //  delay(1000);
-  //  go_mm(-110, -110);
-  //  delay(1000);
-  //
 }
 
 void loop() {
