@@ -1,13 +1,13 @@
-#include <Multiservo.h>
+// #include <Multiservo.h>
 #include <stdint.h>
 
 // Создаём объект для работы с сервомоторами
-Multiservo multiservo;
+// Multiservo multiservo;
 
-#include "PriUint64.h"
+// #include "PriUint64.h"
 
-#define LEFT_MOTOR MOTORB
-#define RIGHT_MOTOR MOTORA
+// #define LEFT_MOTOR MOTORB
+// #define RIGHT_MOTOR MOTORA
 
 #define PIN_ENCODER_LEFT 2
 #define PIN_ENCODER_RIGHT 3
@@ -42,6 +42,15 @@ const long int WHEELS_DISTANCE_MM = 120;
 
 int leftSpeed = 255;
 int rightSpeed = 255;
+
+
+
+
+void do_busywait(void) {
+  //do smth
+}
+
+
 
 void setLeftSpd(int newSpd) {
   leftSpeed = newSpd;
@@ -113,6 +122,7 @@ void go(const int64_t deltaTicksLeft, const int64_t deltaTicksRight) {
       Serial.println("STOP left");
       stoppedLeft = true;
     }
+    do_busywait();
   }
 }
 
@@ -137,8 +147,8 @@ void setup() {
   // digitalWrite(A0, HIGH);
   // digitalWrite(A1, LOW);
 
-  multiservo.attach(0);
-  multiservo.write(110);
+  // multiservo.attach(0);
+  // multiservo.write(110);
 
   delay(2000);
 
