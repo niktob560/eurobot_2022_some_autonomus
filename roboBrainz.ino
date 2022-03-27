@@ -28,7 +28,7 @@ volatile void tickLeft(void) { ticksLeft += isFwdLeft ? 1 : -1; }
 
 volatile void tickRight(void) { ticksRight += isFwdRight ? 1 : -1; }
 
-const uint8_t spd = 128;
+const uint8_t spd = 64;
 
 //Setup zone
 const long double TICKS_PER_DEGREE = 17.271;
@@ -45,9 +45,23 @@ int rightSpeed = 255;
 
 
 
-
+int ifisminusone = -1;
+double prevSome = -1;
+int counter = 0;
 void do_busywait(void) {
-  //do smth
+  double aa = (checkResNum(A5) + (prevSome * 3)) / 4;
+  int a = (int) aa;
+  if (ifisminusone == -1 && a > 0) {
+    counter ++;
+  }
+
+  prevSome = aa;
+
+  Serial.println(ifisminusone);
+  delay(5);
+
+//  while(counter >= 9);
+  ifisminusone = a;
 }
 
 
@@ -60,6 +74,47 @@ void setLeftSpd(int newSpd) {
 void setRightSpd(int newSpd) {
   rightSpeed = newSpd;
   rotateRight(isFwdRight);
+}
+
+int checkResistor(int sensorPin) {
+  const int constRes = 240;
+  int sensormV = (4.887 * analogRead(sensorPin));
+  if (sensormV < 50) return -1;
+  
+  int ohm = 5000 / sensormV * constRes - constRes;
+  
+  return ohm;
+}
+
+
+int checkResNum(int sensorPin) {
+  /*
+   * Gets:
+   *   Analog pin with 0..5V voltage interval.
+   * Returns:
+   *   -1 if resistor not connected;
+   *   0 if no resistance or resistor unidentified;
+   *   1 for 470Ohm resistor;
+   *   2 for 1kOhm;
+   *   3 for 4.7kOhm.
+   */
+  const int interval = 200;
+  const int firstRes = 470;
+  const int secondRes = 1000;
+  const int thirdRes = 4700;
+  
+  int ohm = checkResistor(sensorPin);
+  if (ohm == -1) return -1;
+  else if (ohm > firstRes - interval && ohm < firstRes + interval) {
+    return 1;
+  }
+  else if (ohm > secondRes - interval && ohm < secondRes + interval) {
+    return 2;
+  }
+  else if (ohm > thirdRes - interval && ohm < thirdRes + interval) {
+    return 3;
+  }
+  else return 0;
 }
 
 void rotateLeft(bool isFwd) {
@@ -112,14 +167,14 @@ void go(const int64_t deltaTicksLeft, const int64_t deltaTicksRight) {
                     : (tgtTicksRight >= ticksRight)) &&
         !stoppedRight) {
       stopRight();
-      Serial.println("STOP right");
+//      Serial.println("STOP right");
       stoppedRight = true;
     }
     if ((isFwdLeft ? (tgtTicksLeft <= ticksLeft)
                    : (tgtTicksLeft >= ticksLeft)) &&
         !stoppedLeft) {
       stopLeft();
-      Serial.println("STOP left");
+//      Serial.println("STOP left");
       stoppedLeft = true;
     }
     do_busywait();
@@ -134,6 +189,7 @@ void go_mm(const long double deltaMmLeft, const long double deltaMmRight) {
 
 
 void setup() {
+  pinMode(A5, INPUT);
   attachInterrupt(digitalPinToInterrupt(PIN_ENCODER_LEFT), tickLeft, FALLING);
   attachInterrupt(digitalPinToInterrupt(PIN_ENCODER_RIGHT), tickRight, FALLING);
   Serial.begin(115200);
@@ -150,10 +206,12 @@ void setup() {
   // multiservo.attach(0);
   // multiservo.write(110);
 
+//return;
+
   delay(2000);
 
-  Serial.println("Waiting for start");
-  while (!Serial.available());
+//  Serial.println("Waiting for start");
+//  while (Serial.available());
 
   // Serial.println("START");
   // go_mm(0, 198);
@@ -163,14 +221,15 @@ void setup() {
   // Serial.println("ZEROING");
 
   // go_mm(-100, -100);
-  Serial.println("GOING");
+//  Serial.println("GOING");
   delay(1000);
 
 
-  go_mm(WHEELS_DISTANCE_MM * 1.25, 0);
-  Serial.println("WFD");
+//  go_mm(WHEELS_DISTANCE_MM * 1.25, 0);
+//  Serial.println("WFD");
+//  setRightSpd(spd+15);
   go_mm(93 * 100, 93 * 100);
-  Serial.println("ASYMMETRIC");
+//  Serial.println("ASYMMETRIC");
   setLeftSpd(spd / 2);
   setRightSpd(spd);
   go_mm(500, 1000);
@@ -217,6 +276,8 @@ void setup() {
 }
 
 void loop() {
+//  Serial.println(checkResNum(A5));
+//  delay(50);
   //  int roww = analogRead(A2);
   //  //Serial.println(analogRead(A2));
   //  if (roww < 350 && roww > 330)
